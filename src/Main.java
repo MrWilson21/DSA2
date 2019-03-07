@@ -1,28 +1,37 @@
 import java.util.*;
 
-
 public class Main
 {
-    public static int numberOfTests = 10;
-    public static int sizeOfInputs = 100;
-    public static int rangeOfInputs = 1;
-    public static int numberOfRepetitions = 10;
+    public static int numberOfTests = 15; //Number of different tests, each test will have (test Number * sizeOfInputs) sized inputs.
+                                         //Each test generates one data point for each of the 3 algorithms
+    public static int sizeOfInputs = 1000; //Number of elements in each array
+    public static int rangeOfInputs = 2; //Amount of different possible numbers being used when generating arrays to test with
+    public static int numberOfRepetitions = 300; //Number of times a test will be repeated. Repeated with different inputs of the same size of that test
 
     public static void main(String[] args)
     {
-        long[][] resultsList = new long[numberOfTests][];
+        //"Warm up" code, can help get more consistent results
+        for(int i=0; i<3; i++)
+        {
+            testEachAlgorithm(sizeOfInputs * (i+1), numberOfRepetitions, rangeOfInputs);
+        }
+
+        long[][] resultsList = new long[numberOfTests][]; //List of timings for each test
         for(int i=0; i<numberOfTests; i++)
         {
+            System.out.println("Current test number: " + (i + 1) + " of " + (numberOfTests) + " with size of input: " + sizeOfInputs * (i+1));
             resultsList[i] = testEachAlgorithm(sizeOfInputs * (i+1), numberOfRepetitions, rangeOfInputs);
         }
 
+        //Print out results of tests
+        System.out.println("\nResults:\n");
         System.out.println("Size\tSVD1\tSVD2\tSVD3");
         for(int i=0; i < numberOfTests; i++)
         {
             System.out.print(sizeOfInputs * (i+1) + "\t");
             for(int j=0; j < 3; j++)
             {
-                System.out.print(resultsList[i][j] + "\t");
+                System.out.print((resultsList[i][j]) + "\t");
             }
             System.out.println();
         }
@@ -40,13 +49,6 @@ public class Main
         for(int i=0; i<numberOfRepetitions; i++)
         {
             int[] intArray = generateIntArray(sizeOfInput, 1, 1 + rangeOfInputs);
-
-            System.out.println("Testing with array:");
-            for(int j=0; j < sizeOfInput; j++)
-            {
-                System.out.print(intArray[j] + " ");
-            }
-            System.out.println();
 
             startTime = System.nanoTime();
             SVD1(intArray);
@@ -90,7 +92,7 @@ public class Main
     //For each number in the array it counts the number of times the number shows up
     //Returns the number if it shows up more than n/2 times
     //Throws up an exception if no SVD exists
-    public static void SVD1(int[] numbers)
+    public static int SVD1(int[] numbers)
     {
         int minCountToDominate = numbers.length / 2 + 1;
         for(int numberToCheck: numbers)
@@ -103,13 +105,12 @@ public class Main
                     count++;
                     if(count >= minCountToDominate)
                     {
-                        System.out.println(numberToCheck);
-                        return;
+                        return numberToCheck;
                     }
                 }
             }
         }
-        System.out.println("SVD not found");
+        return -1;
     }
 
     //Second implementation for finding SDV of an array of ints
@@ -132,7 +133,7 @@ public class Main
             }
             else
             {
-                count = 0;
+                count = 1;
             }
             if(count > lengthOverTwo)
             {
@@ -151,7 +152,7 @@ public class Main
     //If count reaches 0 then set major number to the current number and set count to 1
     //Iterate through each number again after finding major candidate to count the number of times it appears in the list
     //Return major candidate if its count is more than length/2 of array
-    public static void SVD3(int[] numbers)
+    public static int SVD3(int[] numbers)
     {
         int count = 1;
         int majorNumber = numbers[0];
@@ -184,13 +185,11 @@ public class Main
 
         if(count > numbers.length / 2)
         {
-            System.out.println(majorNumber);
-            return;
+            return majorNumber;
         }
         else
         {
-            System.out.println("SVD not found");
-            return;
+            return -1;
         }
     }
 }
