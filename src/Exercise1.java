@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main
+public class Exercise1
 {
     public static int numberOfTests = 15; //Number of different tests, each test will have (test Number * sizeOfInputs) sized inputs.
                                          //Each test generates one data point for each of the 3 algorithms
