@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Random;
 
 public class ArrayHashTable extends HashTable
@@ -173,7 +174,7 @@ public class ArrayHashTable extends HashTable
     public static long[] testAlgorithm(int sizeOfInput, int numberOfRepetitions, int rangeOfInputs)
     {
         //3 longs are needed to record time taken to add and time taken to remove items from hash table and total time taken
-        long[] timingResults = new long[3];
+        long[] timingResults = new long[4];
         long startTime;
 
         //Repeat timing experiment numberOfRepetitions times for each size of input
@@ -184,11 +185,11 @@ public class ArrayHashTable extends HashTable
 
             //Start timer after initialing an ArrayHashTable
             ArrayHashTable arrayHashTable = new ArrayHashTable(10);
+            HashSet hashSet = new HashSet();
             startTime = System.nanoTime();
             //Add all numbers from intArray to the ArrayHashTable
             for(int number: intArray)
             {
-
                 arrayHashTable.add(number);
             }
             //Add time taken to timing results
@@ -203,10 +204,25 @@ public class ArrayHashTable extends HashTable
             //Add time taken to timing results
             timingResults[1] += System.nanoTime() - startTime;
 
+            //Add all numbers from intArray to the HashSet
+            startTime = System.nanoTime();
+            for(int number: intArray)
+            {
+                hashSet.add(number);
+            }
+            //Remove all numbers from intArray to the HashSet
+            for(int number: intArray)
+            {
+                hashSet.remove(number);
+            }
+            //Add time taken to timing results
+            timingResults[3] += System.nanoTime() - startTime;
+
         }
         //Get average times after repeating test
         timingResults[0] = timingResults[0] / numberOfRepetitions;
         timingResults[1] = timingResults[1] / numberOfRepetitions;
+        timingResults[3] = timingResults[3] / numberOfRepetitions;
         //Get total time taken
         timingResults[2] = timingResults[0] + timingResults[1];
 
@@ -230,11 +246,11 @@ public class ArrayHashTable extends HashTable
 
     public static void main(String[] args)
     {
-        int numberOfTests = 15; //Number of different tests, each test will have (test Number * sizeOfInputs) sized inputs.
+        int numberOfTests = 50; //Number of different tests, each test will have (test Number * sizeOfInputs) sized inputs.
         //Each test generates one data point
-        int sizeOfInputs = 25000; //Number of elements in each array
+        int sizeOfInputs = 1000; //Number of elements in each array
         int rangeOfInputs = Integer.MAX_VALUE-1; //Amount of different possible numbers being used when generating arrays to test with
-        int numberOfRepetitions = 5; //Number of times a test will be repeated. Repeated with different inputs of the same size of that test
+        int numberOfRepetitions = 25; //Number of times a test will be repeated. Repeated with different inputs of the same size of that test
 
         //"Warm up" code, can help get more consistent results
         for(int i=0; i<3; i++)
@@ -251,13 +267,14 @@ public class ArrayHashTable extends HashTable
 
         //Print out results of tests
         System.out.println("\nResults:\n");
-        System.out.println("Size\tAdding to list\tRemoving from list\tTotal time taken");
+        System.out.println("Size\tAdding to list\tRemoving from list\tTotal time taken\thashSet total time");
         for(int i=0; i < numberOfTests; i++)
         {
             System.out.print(sizeOfInputs * (i+1) + "\t");
             System.out.print((resultsList[i][0]) + "\t");
             System.out.print((resultsList[i][1]) + "\t");
-            System.out.print((resultsList[i][2]));
+            System.out.print((resultsList[i][2]) + "\t");
+            System.out.print((resultsList[i][3]));
             System.out.println();
         }
     }
